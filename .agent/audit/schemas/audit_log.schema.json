@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Audit Log Entry",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "task_id",
+    "agent",
+    "action",
+    "target",
+    "decision",
+    "reason",
+    "policy_result",
+    "approval_required"
+  ],
+  "properties": {
+    "timestamp": {"type": "string"},
+    "task_id": {"type": "string"},
+    "agent": {"type": "string"},
+    "action": {"type": "string"},
+    "target": {"type": "string"},
+    "decision": {"enum": ["allow", "deny", "require_approval", "record_only"]},
+    "reason": {"type": "string"},
+    "policy_result": {"type": "string"},
+    "approval_required": {"type": "boolean"},
+    "approval_id": {"type": ["string", "null"]},
+    "tool_name": {"type": ["string", "null"]},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]}
+  }
+}

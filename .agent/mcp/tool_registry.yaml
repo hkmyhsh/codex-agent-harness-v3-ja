@@ -1,0 +1,75 @@
+version: 3
+tools:
+  - name: github_repository_read
+    category: github
+    action_type: read
+    resources: [repository]
+    default_agents: [Planner, Architect, Executor, Tester, Reviewer, Documenter]
+
+  - name: github_pull_request_write
+    category: github
+    action_type: create_pr
+    resources: [repository]
+    default_agents: [Executor]
+    approval_required: false
+
+  - name: github_repository_settings_write
+    category: github
+    action_type: github_settings_write
+    resources: [repository_settings]
+    default_agents: []
+    approval_required: true
+    default_effect: deny
+
+  - name: filesystem_read
+    category: filesystem
+    action_type: read
+    resources: [repository, docs, memory_store]
+    default_agents: [Planner, Architect, Executor, Tester, Reviewer, Documenter]
+
+  - name: filesystem_write
+    category: filesystem
+    action_type: edit_file
+    resources: [repository, docs, memory_store]
+    default_agents: [Architect, Executor, Tester, Reviewer, Documenter]
+
+  - name: shell_test
+    category: shell
+    action_type: run_test
+    resources: [repository]
+    default_agents: [Executor, Tester]
+
+  - name: aws_readonly
+    category: aws
+    action_type: aws_read
+    resources: [aws_readonly]
+    default_agents: [Architect, Executor, Tester]
+
+  - name: aws_write
+    category: aws
+    action_type: aws_write
+    resources: [aws_write]
+    default_agents: []
+    approval_required: true
+    default_effect: deny
+
+  - name: terraform_plan
+    category: terraform
+    action_type: terraform_plan
+    resources: [terraform]
+    default_agents: [Architect, Executor, Tester]
+
+  - name: terraform_apply
+    category: terraform
+    action_type: terraform_apply
+    resources: [terraform]
+    default_agents: []
+    approval_required: true
+    default_effect: deny
+
+  - name: slack_notify
+    category: slack
+    action_type: slack_notify
+    resources: [slack]
+    default_agents: [Documenter]
+    approval_required: true

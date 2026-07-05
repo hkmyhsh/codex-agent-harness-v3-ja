@@ -1,0 +1,44 @@
+{
+  "schema_version": "3.0",
+  "task_id": "sample-runner-wait-monitor",
+  "task_name": "GitHub Actions Self-hosted Runner待機時間監視",
+  "goal": "20分以上待機しているGitHub Actionsジョブを検知し、通知・調査できる仕組みを設計する。",
+  "status": "planning",
+  "current_agent": "Planner",
+  "next_agent": "Architect",
+  "current_step": "初期計画作成",
+  "next_action": "Plannerとしてタスクを分解し、Architectに渡す設計観点をplan.mdへ整理する。",
+  "environment": "dev",
+  "repository": "REPLACE_WITH_TARGET_REPOSITORY",
+  "branch": "feature/agent-harness-v3",
+  "allowed_actions": [
+    "read",
+    "plan"
+  ],
+  "approval": {
+    "required": false,
+    "reason": null,
+    "approval_id": null,
+    "status": "not_required"
+  },
+  "policy_context": {
+    "policy_file": ".agent/policy/policy_matrix.yaml",
+    "last_policy_check": null,
+    "last_policy_result": null
+  },
+  "todo": [
+    "要件整理",
+    "GitHub API調査",
+    "監視方式設計",
+    "通知方式設計",
+    "テスト観点整理",
+    "Runbook作成"
+  ],
+  "done": [],
+  "blocked": false,
+  "blocked_reason": null,
+  "retry_count": 0,
+  "max_retry": 3,
+  "risk_level": "medium",
+  "last_updated": "2026-07-05T00:00:00+09:00"
+}

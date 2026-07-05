@@ -1,0 +1,167 @@
+version: 3
+policy_name: codex-agent-harness-v3-policy
+mode: advisory_and_gateway_enforced
+
+defaults:
+  unknown_action: deny
+  unknown_resource: deny
+  production_change: require_human_approval
+  destructive_action: require_human_approval
+  external_notification: require_human_approval
+
+attributes:
+  agents:
+    - Planner
+    - Architect
+    - Executor
+    - Tester
+    - Reviewer
+    - Documenter
+  environments:
+    - local
+    - dev
+    - staging
+    - production
+  branches:
+    - feature/*
+    - develop
+    - main
+    - master
+  action_types:
+    - read
+    - plan
+    - edit_file
+    - run_test
+    - git_commit
+    - git_push
+    - create_pr
+    - update_pr
+    - github_settings_write
+    - aws_read
+    - aws_write
+    - terraform_plan
+    - terraform_apply
+    - terraform_destroy
+    - slack_notify
+    - secret_write
+    - delete_data
+
+rules:
+  - id: R-PLANNER-READ-PLAN
+    description: Plannerは読み取り・計画作成のみ許可する。
+    effect: allow
+    agents: [Planner]
+    environments: [local, dev, staging, production]
+    branches: [feature/*, develop, main, master]
+    action_types: [read, plan]
+    resources: [repository, memory_store, docs]
+    approval_required: false
+
+  - id: R-PLANNER-DENY-WRITE
+    description: Plannerはコード・設定・外部サービスを変更してはならない。
+    effect: deny
+    agents: [Planner]
+    action_types: [edit_file, git_commit, git_push, create_pr, update_pr, aws_write, terraform_apply, terraform_destroy, slack_notify, secret_write, delete_data]
+    resources: [any]
+
+  - id: R-ARCHITECT-DESIGN
+    description: Architectは設計文書とMemoryの更新を許可する。
+    effect: allow
+    agents: [Architect]
+    environments: [local, dev, staging]
+    branches: [feature/*, develop]
+    action_types: [read, plan, edit_file]
+    resources: [docs, memory_store]
+    approval_required: false
+
+  - id: R-EXECUTOR-DEV-WRITE
+    description: Executorはdev/stagingのfeatureブランチで実装とテストを許可する。
+    effect: allow
+    agents: [Executor]
+    environments: [local, dev, staging]
+    branches: [feature/*, develop]
+    action_types: [read, edit_file, run_test, git_commit, create_pr, update_pr, terraform_plan, aws_read]
+    resources: [repository, docs, memory_store, github_actions, aws_readonly]
+    approval_required: false
+
+  - id: R-EXECUTOR-PUSH-DEVELOP
+    description: Executorのdevelop pushは人間承認を要求する。
+    effect: allow
+    agents: [Executor]
+    environments: [dev, staging]
+    branches: [develop]
+    action_types: [git_push]
+    resources: [repository]
+    approval_required: true
+
+  - id: R-TESTER-TEST
+    description: Testerはテスト実行と結果記録を許可する。
+    effect: allow
+    agents: [Tester]
+    environments: [local, dev, staging]
+    branches: [feature/*, develop]
+    action_types: [read, run_test, edit_file]
+    resources: [repository, docs, memory_store]
+    approval_required: false
+
+  - id: R-REVIEWER-READONLY
+    description: Reviewerは読み取りとレビュー記録のみ許可する。
+    effect: allow
+    agents: [Reviewer]
+    environments: [local, dev, staging, production]
+    branches: [feature/*, develop, main, master]
+    action_types: [read, edit_file]
+    resources: [docs, memory_store, audit_log]
+    approval_required: false
+
+  - id: R-DOCUMENTER-DOCS
+    description: DocumenterはdocsとMemoryのみ更新できる。
+    effect: allow
+    agents: [Documenter]
+    environments: [local, dev, staging]
+    branches: [feature/*, develop]
+    action_types: [read, edit_file]
+    resources: [docs, memory_store]
+    approval_required: false
+
+  - id: R-DENY-MAIN-PUSH
+    description: main/masterへの直接pushは禁止する。
+    effect: deny
+    agents: [Planner, Architect, Executor, Tester, Reviewer, Documenter]
+    branches: [main, master]
+    action_types: [git_push]
+    resources: [repository]
+
+  - id: R-PRODUCTION-APPROVAL
+    description: production環境への変更は人間承認を必須にする。
+    effect: allow
+    agents: [Executor]
+    environments: [production]
+    action_types: [terraform_plan, aws_read]
+    resources: [aws_readonly]
+    approval_required: true
+
+  - id: R-DENY-PRODUCTION-WRITE
+    description: Codex単独でのproduction writeは禁止する。
+    effect: deny
+    agents: [Planner, Architect, Executor, Tester, Reviewer, Documenter]
+    environments: [production]
+    action_types: [aws_write, terraform_apply, terraform_destroy, secret_write, delete_data]
+    resources: [any]
+
+  - id: R-SECRET-WRITE-APPROVAL
+    description: Secret更新は承認必須。Codex単独実行は禁止する。
+    effect: deny
+    agents: [Planner, Architect, Executor, Tester, Reviewer, Documenter]
+    action_types: [secret_write]
+    resources: [secrets]
+
+  - id: R-SLACK-NOTIFY-APPROVAL
+    description: Slack通知は人間承認を必須にする。
+    effect: allow
+    agents: [Documenter, Executor]
+    environments: [dev, staging]
+    branches: [feature/*, develop]
+    action_types: [slack_notify]
+    resources: [slack]
+    approval_required: true

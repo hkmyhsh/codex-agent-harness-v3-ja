@@ -1,0 +1,44 @@
+name: Agent Harness Check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jsonschema pyyaml
+
+      - name: Validate state.json
+        run: |
+          python scripts/validate_state.py .agent/state.json .agent/state.schema.json
+
+      - name: Validate policy
+        run: |
+          python scripts/validate_policy.py .agent/policy/policy_matrix.yaml
+
+      - name: Check required harness files
+        run: |
+          test -f AGENTS.md
+          test -f .agent/task.md
+          test -f .agent/plan.md
+          test -f .agent/decisions.md
+          test -f .agent/review.md
+          test -f .agent/policy/policy_matrix.yaml
+          test -f .agent/mcp/tool_registry.yaml
+          test -f .agent/audit/audit_log.jsonl

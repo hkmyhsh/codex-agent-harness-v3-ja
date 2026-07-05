@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex Agent Harness v3 State",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "task_name",
+    "goal",
+    "status",
+    "current_agent",
+    "next_agent",
+    "current_step",
+    "next_action",
+    "environment",
+    "repository",
+    "branch",
+    "allowed_actions",
+    "approval",
+    "policy_context",
+    "todo",
+    "done",
+    "blocked",
+    "retry_count",
+    "max_retry",
+    "risk_level",
+    "last_updated"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "task_id": {"type": "string"},
+    "task_name": {"type": "string"},
+    "goal": {"type": "string"},
+    "status": {
+      "enum": ["planning", "designing", "executing", "testing", "review_required", "documenting", "blocked", "done"]
+    },
+    "current_agent": {
+      "enum": ["Planner", "Architect", "Executor", "Tester", "Reviewer", "Documenter"]
+    },
+    "next_agent": {
+      "enum": ["Planner", "Architect", "Executor", "Tester", "Reviewer", "Documenter"]
+    },
+    "current_step": {"type": "string"},
+    "next_action": {"type": "string"},
+    "environment": {"enum": ["local", "dev", "staging", "production"]},
+    "repository": {"type": "string"},
+    "branch": {"type": "string"},
+    "allowed_actions": {"type": "array", "items": {"type": "string"}},
+    "approval": {
+      "type": "object",
+      "required": ["required", "status"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "reason": {"type": ["string", "null"]},
+        "approval_id": {"type": ["string", "null"]},
+        "status": {"enum": ["not_required", "pending", "approved", "rejected"]}
+      }
+    },
+    "policy_context": {"type": "object"},
+    "todo": {"type": "array", "items": {"type": "string"}},
+    "done": {"type": "array", "items": {"type": "string"}},
+    "blocked": {"type": "boolean"},
+    "blocked_reason": {"type": ["string", "null"]},
+    "retry_count": {"type": "integer", "minimum": 0},
+    "max_retry": {"type": "integer", "minimum": 1},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "last_updated": {"type": "string"}
+  }
+}

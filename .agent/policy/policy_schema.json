@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex Agent Harness v3 Policy Schema",
+  "type": "object",
+  "required": ["version", "policy_name", "defaults", "rules"],
+  "properties": {
+    "version": {"type": "integer"},
+    "policy_name": {"type": "string"},
+    "mode": {"type": "string"},
+    "defaults": {"type": "object"},
+    "attributes": {"type": "object"},
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "effect", "agents", "action_types", "resources"],
+        "properties": {
+          "id": {"type": "string"},
+          "description": {"type": "string"},
+          "effect": {"enum": ["allow", "deny"]},
+          "agents": {"type": "array", "items": {"type": "string"}},
+          "environments": {"type": "array", "items": {"type": "string"}},
+          "branches": {"type": "array", "items": {"type": "string"}},
+          "action_types": {"type": "array", "items": {"type": "string"}},
+          "resources": {"type": "array", "items": {"type": "string"}},
+          "approval_required": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

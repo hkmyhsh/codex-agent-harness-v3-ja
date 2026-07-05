@@ -1,0 +1,1 @@
+{"timestamp":"2026-07-05T00:00:00+09:00","task_id":"sample-runner-wait-monitor","agent":"Planner","action":"initialize_harness","target":".agent/state.json","decision":"allow","reason":"v3テンプレート初期化","policy_result":"allow","approval_required":false}
