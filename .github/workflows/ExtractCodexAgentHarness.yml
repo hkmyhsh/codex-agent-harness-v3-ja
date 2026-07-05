@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: extract-codex-agent-harness-v2-${{ github.ref }}
+  group: extract-codex-agent-harness-v3-${{ github.ref }}
   cancel-in-progress: false
 
 env:
